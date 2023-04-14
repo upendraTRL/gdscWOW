@@ -23,9 +23,20 @@ class MongoDatabase {
     print(lat);
     var collection = db.collection(COLLECTION_NAME); //Collection specified
     // print(await collection.find().toList());
-    await collection.insertOne({
-      "latitude": lat,
-      "longitude": long,
-    });
+
+    final update = modify
+      ..set('latitude', '40')
+      ..set('longitude', '-100');
+
+    await collection.updateMany(
+        where
+            .eq('latitude', '37.4219983')
+            .and(where.eq('longitude', '-122.084')),
+        update);
+
+    // await collection.insertOne({
+    //   "latitude": lat,
+    //   "longitude": long,
+    // });
   }
 }
