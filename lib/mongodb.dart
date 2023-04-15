@@ -21,21 +21,27 @@ class MongoDatabase {
     print(status);
     print(lat);
     var collection = db.collection(COLLECTION_NAME); //Collection specified
-    print(await collection.find().toList());
+    var neww;
+    var dataFetched = [
+      {"new": neww}
+    ];
+    dataFetched =
+        await collection.find({"latitude": lat, "longitude": long}).toList();
+    print(dataFetched);
 
-    // final update = modify
-    //   ..set('latitude', '40')
-    //   ..set('longitude', '-100');
+    if (dataFetched.isEmpty) {
+      print("newwwwwwwwwwww");
+      await collection.insertOne({
+        "latitude": lat,
+        "longitude": long,
+      });
+    } else {
+      final update = modify
+        ..set('latitude', '1321')
+        ..set('longitude', '-31311');
 
-    // await collection.updateMany(
-    //     where
-    //         .eq('latitude', '37.4219983')
-    //         .and(where.eq('longitude', '-122.084')),
-    //     update);
-
-    // await collection.insertOne({
-    //   "latitude": lat,
-    //   "longitude": long,
-    // });
+      await collection.updateMany(
+          where.eq('latitude', lat).and(where.eq('longitude', long)), update);
+    }
   }
 }

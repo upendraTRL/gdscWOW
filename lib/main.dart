@@ -8,7 +8,7 @@ import 'home_page.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   NotificationService().initNotification();
-  Future.delayed(const Duration(seconds: 10), () {
+  Future.delayed(const Duration(seconds: 4), () {
     MongoDatabase.connect();
   });
   runApp(const MyApp());
