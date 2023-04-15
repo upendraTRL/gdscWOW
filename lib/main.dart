@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:testflutter/language_page.dart';
+import 'package:testflutter/mongodb.dart';
 import 'Services/notifi_service.dart';
 
 import 'home_page.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   NotificationService().initNotification();
+  Future.delayed(const Duration(seconds: 10), () {
+    MongoDatabase.connect();
+  });
   runApp(const MyApp());
 }
 
@@ -21,7 +25,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyLangPage(),
+      home: const MyHomePage(
+        title: 'Home Page',
+      ),
     );
   }
 }

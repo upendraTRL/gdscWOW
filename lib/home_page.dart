@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:testflutter/language_page.dart';
 import 'package:testflutter/services/notifi_service.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:testflutter/mongodb.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -11,7 +14,41 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  String locationMessage = "Current location";
+  late String lat;
+  late String long;
+
   @override
+  void initState() {
+    print("object");
+    super.initState();
+    _getCurrentLocation().then((value) {
+      lat = '${value.latitude}';
+      long = '${value.longitude}';
+      getLatLong(lat, long);
+    });
+  }
+
+  Future<Position> _getCurrentLocation() async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return Future.error('Location services are disabled');
+    }
+
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error("Locatoon permission are denied");
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error("Location permissions are permanently denied");
+    }
+    return await Geolocator.getCurrentPosition();
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       //Appbar
@@ -53,7 +90,10 @@ class _MyHomePageState extends State<MyHomePage> {
             ListTile(
               leading: const Icon(Icons.language),
               title: const Text('Languages'),
-              onTap: () {},
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => MyLangPage()));
+              },
             ),
           ],
         ),
@@ -61,13 +101,38 @@ class _MyHomePageState extends State<MyHomePage> {
 
       //Body
       body: Center(
-          child: ElevatedButton(
-        style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-        child: const Text('S.O.S'),
-        onPressed: () {
-          NotificationService().showNotification(
-              title: 'Alert', body: 'Earthquake started at Nagar!');
-        },
+          child: Column(
+        children: [
+          Container(
+            // padding: EdgeInsets.all(16),
+            // color: Colors.grey[200],
+            child: Card(
+              margin: EdgeInsets.only(bottom: 180, top: 20),
+              child: Padding(
+                padding: EdgeInsets.all(50),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                    Text('Sydney', style: TextStyle(fontSize: 32)),
+                    SizedBox(height: 15),
+                    Text(
+                      'Temparature: 35 C \n\nCalamity: Tsunami \n\nPrecautions: Move to amsterdam (Safe Location)',
+                      style: TextStyle(fontSize: 18),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: const Text('S.O.S'),
+            onPressed: () {
+              NotificationService().showNotification(
+                  title: 'Alert', body: 'Earthquake started at Nagar!');
+            },
+          )
+        ],
       )),
     );
   }
