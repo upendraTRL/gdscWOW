@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:testflutter/language_page.dart';
 import 'Services/notifi_service.dart';
 
 import 'home_page.dart';
@@ -20,7 +21,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Local Notifications'),
+      home: MyLangPage(),
     );
   }
 }

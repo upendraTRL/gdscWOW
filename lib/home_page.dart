@@ -50,6 +50,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 // Navigator.pop(context);
               },
             ),
+            ListTile(
+              leading: const Icon(Icons.language),
+              title: const Text('Languages'),
+              onTap: () {},
+            ),
           ],
         ),
       ),
