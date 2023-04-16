@@ -3,6 +3,7 @@ import 'package:testflutter/language_page.dart';
 import 'package:testflutter/services/notifi_service.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:testflutter/mongodb.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -17,6 +18,29 @@ class _MyHomePageState extends State<MyHomePage> {
   String locationMessage = "Current location";
   late String lat;
   late String long;
+
+  //Webview
+  late WebViewController controller = WebViewController()
+    ..setJavaScriptMode(JavaScriptMode.unrestricted)
+    ..setBackgroundColor(const Color(0x00000000))
+    ..setNavigationDelegate(
+      NavigationDelegate(
+        onProgress: (int progress) {
+          // Update loading bar.
+        },
+        onPageStarted: (String url) {},
+        onPageFinished: (String url) {},
+        onWebResourceError: (WebResourceError error) {},
+        onNavigationRequest: (NavigationRequest request) {
+          if (request.url
+              .startsWith('https://mrprayag077.github.io/gdsc-otherpgs/')) {
+            return NavigationDecision.prevent;
+          }
+          return NavigationDecision.navigate;
+        },
+      ),
+    )
+    ..loadRequest(Uri.parse('https://mrprayag077.github.io/gdsc-otherpgs/'));
 
   @override
   void initState() {
@@ -107,7 +131,7 @@ class _MyHomePageState extends State<MyHomePage> {
             // padding: EdgeInsets.all(16),
             // color: Colors.grey[200],
             child: Card(
-              margin: EdgeInsets.only(bottom: 180, top: 20),
+              margin: EdgeInsets.only(bottom: 10, top: 20),
               child: Padding(
                 padding: EdgeInsets.all(50),
                 child: Column(
@@ -123,6 +147,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
             ),
+          ),
+          SizedBox(
+            width: 400,
+            height: 200,
+            child: WebViewWidget(controller: controller),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
