@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:testflutter/language_page.dart';
+import 'package:testflutter/rescue.dart';
+import 'surveyForm.dart';
+import 'package:testflutter/preventions.dart';
 import 'package:testflutter/services/notifi_service.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:testflutter/mongodb.dart';
+import 'package:testflutter/surveyForm.dart';
+import 'package:translator/translator.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -15,6 +20,29 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  //Dropdown
+  TextEditingController textEditingController = TextEditingController();
+  GoogleTranslator translator = GoogleTranslator();
+  var output;
+  String? dropdownValue;
+
+  static const Map<String, String> lang = {
+    "Language": "en",
+    "Hindi": "hi",
+    "English": "en",
+    "Urdu": "ur",
+  };
+
+  void trans() {
+    translator
+        .translate(textEditingController.text, to: "$dropdownValue")
+        .then((value) {
+      setState(() {
+        output = value;
+      });
+    });
+  }
+
   String locationMessage = "Current location";
   late String lat;
   late String long;
@@ -101,14 +129,29 @@ class _MyHomePageState extends State<MyHomePage> {
               leading: const Icon(Icons.shield),
               title: const Text('Preventions'),
               onTap: () {
-                // Navigator.pop(context);
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => MyPrevention()));
               },
             ),
             ListTile(
               leading: const Icon(Icons.warning),
               title: const Text('Precautions'),
+              onTap: () {},
+            ),
+            ListTile(
+              leading: const Icon(Icons.text_format),
+              title: const Text('Survey Form'),
               onTap: () {
-                // Navigator.pop(context);
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => MySurveyPage()));
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.gps_fixed),
+              title: const Text('Map'),
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => MyRescuePage()));
               },
             ),
             ListTile(
@@ -125,44 +168,81 @@ class _MyHomePageState extends State<MyHomePage> {
 
       //Body
       body: Center(
-          child: Column(
-        children: [
-          Container(
-            // padding: EdgeInsets.all(16),
-            // color: Colors.grey[200],
-            child: Card(
-              margin: EdgeInsets.only(bottom: 10, top: 20),
-              child: Padding(
-                padding: EdgeInsets.all(50),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    Text('Sydney', style: TextStyle(fontSize: 32)),
-                    SizedBox(height: 15),
-                    Text(
-                      'Temparature: 35 C \n\nCalamity: Tsunami \n\nPrecautions: Move to amsterdam (Safe Location)',
-                      style: TextStyle(fontSize: 18),
-                    ),
-                  ],
+        child: Column(
+          children: [
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+            //   children: [
+            //     Text("Select Region"),
+            //     DropdownButton<String>(
+            //       value: dropdownValue,
+            //       icon: Icon(Icons.arrow_downward),
+            //       iconSize: 24,
+            //       elevation: 16,
+            //       style: TextStyle(color: Colors.deepPurple),
+            //       underline: Container(
+            //         height: 2,
+            //         color: Colors.deepPurpleAccent,
+            //       ),
+            //       onChanged: (String? newValue) {
+            //         setState(() {
+            //           dropdownValue = newValue;
+            //           trans();
+            //         });
+            //       },
+            //       items: lang
+            //           .map((string, value) {
+            //             return MapEntry(
+            //               string,
+            //               DropdownMenuItem<String>(
+            //                 value: value,
+            //                 child: Text(string),
+            //               ),
+            //             );
+            //           })
+            //           .values
+            //           .toList(),
+            //     ),
+            //   ],
+            // ),
+
+            Container(
+              // padding: EdgeInsets.all(16),
+              // color: Colors.grey[200],
+              child: Card(
+                margin: EdgeInsets.only(bottom: 10, top: 20),
+                child: Padding(
+                  padding: EdgeInsets.all(50),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: const [
+                      Text('Kerala', style: TextStyle(fontSize: 32)),
+                      SizedBox(height: 15),
+                      Text(
+                        'Temparature: 35 C \n\nCalamity: Tsunami \n\nPrecautions: Safe Location - Calicut',
+                        style: TextStyle(fontSize: 18),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-          SizedBox(
-            width: 400,
-            height: 200,
-            child: WebViewWidget(controller: controller),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('S.O.S'),
-            onPressed: () {
-              NotificationService().showNotification(
-                  title: 'Alert', body: 'Earthquake started at Nagar!');
-            },
-          )
-        ],
-      )),
+            SizedBox(
+              width: 400,
+              height: 200,
+              // child: WebViewWidget(controller: controller),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+              child: const Text('S.O.S'),
+              onPressed: () {
+                NotificationService().showNotification(
+                    title: 'Alert', body: 'Earthquake started at Nagar!');
+              },
+            )
+          ],
+        ),
+      ),
     );
   }
 }

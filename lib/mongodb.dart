@@ -21,13 +21,32 @@ class MongoDatabase {
     print(status);
     print(lat);
     var collection = db.collection(COLLECTION_NAME); //Collection specified
+
+    //Fetch prevention
     var neww;
+    var fetchedPrev = [
+      {"new": neww}
+    ];
+    // fetchedPrev = await collection.find({"region": "pune"}).toList();
+    fetchedPrev = await collection.find({"region": "pune"}).toList();
+
+    // await collection.insertOne({
+    //   "region": "pune",
+    //   "preventions": "prevennnnnnnnnnn",
+    // });
+
+    
+
+    print(fetchedPrev);
+
+    //Location update
+
     var dataFetched = [
       {"new": neww}
     ];
     dataFetched =
         await collection.find({"latitude": lat, "longitude": long}).toList();
-    print(dataFetched);
+    // print(dataFetched);
 
     if (dataFetched.isEmpty) {
       print("newwwwwwwwwwww");
